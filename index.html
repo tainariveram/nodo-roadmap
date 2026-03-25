@@ -372,22 +372,19 @@ async function saveEdit(){if(!editingTask||!editingSource)return;const st=docume
 async function saveToGitHub(){try{const gr=await fetch(`https://api.github.com/repos/${ghRepo}/contents/data.json?ref=${ghBranch}`,{headers:{'Authorization':`Bearer ${ghToken}`,'Accept':'application/vnd.github.v3+json'}});const gj=await gr.json();fileSha=gj.sha;const content=btoa(unescape(encodeURIComponent(JSON.stringify(data,null,2))));const pr=await fetch(`https://api.github.com/repos/${ghRepo}/contents/data.json`,{method:'PUT',headers:{'Authorization':`Bearer ${ghToken}`,'Accept':'application/vnd.github.v3+json','Content-Type':'application/json'},body:JSON.stringify({message:`Update: ${editingTask?editingTask.name:'task'}`,content,sha:fileSha,branch:ghBranch})});if(!pr.ok){const e=await pr.json();console.error('Save failed:',e);alert('Failed to save.')}}catch(e){console.error(e);alert('GitHub connection error.')}}
 loadData();
 
-// Mobile: tap bar to show tooltip, tap elsewhere to dismiss
-document.addEventListener('touchstart',function(e){
-  const bar=e.target.closest('.bar');
-  // Close all open tooltips
+// Mobile: tap bar to show tooltip OR open edit modal in admin mode
+document.addEventListener('click',function(e){
+  // Close any open tooltips first
   document.querySelectorAll('.tip.show-mobile').forEach(t=>t.classList.remove('show-mobile'));
+
+  // If in admin mode, let the row onclick handle it (don't show tooltip)
+  if(adminMode) return;
+
+  // Non-admin: tap a bar to toggle its tooltip
+  const bar=e.target.closest('.bar');
   if(bar){
     const tip=bar.querySelector('.tip');
-    if(tip){e.stopPropagation();tip.classList.add('show-mobile')}
-  }
-},{passive:true});
-
-// Mobile: make admin rows tappable via touch
-document.addEventListener('click',function(e){
-  const row=e.target.closest('.gantt-row.editable');
-  if(row&&row.getAttribute('onclick')){
-    // onclick already handles it on desktop; this ensures mobile taps register
+    if(tip) tip.classList.add('show-mobile');
   }
 });
 </script>
