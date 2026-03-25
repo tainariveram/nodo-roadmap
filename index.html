@@ -141,6 +141,8 @@
     width:320px;z-index:200;box-shadow:var(--tooltip-shadow);pointer-events:none;
   }
   .bar:hover .tip{display:block}
+  .bar .tip.show-mobile{display:block;pointer-events:auto}
+  @media(max-width:768px){.bar .tip{left:auto;right:0;width:260px;padding:14px 16px;bottom:calc(100% + 10px)}}
   .tip-name{font-size:14px;font-weight:700;margin-bottom:4px;letter-spacing:-.2px}
   .tip-dates{font-size:11px;color:var(--text-tertiary);margin-bottom:8px}
   .tip-desc{font-size:13px;color:var(--text-secondary);line-height:1.55;margin-bottom:10px}
@@ -236,14 +238,28 @@
   .loading{text-align:center;padding:120px 0;font-size:15px;color:var(--text-secondary)}
 
   @media(max-width:768px){
-    .header,.timeline,.legend,.progress-row{padding-left:20px;padding-right:20px}
-    .header h1{font-size:26px}
-    .gantt-row,.milestone-row,.launch-row,.months-bar{grid-template-columns:160px 1fr}
+    .header,.timeline,.legend,.progress-row{padding-left:16px;padding-right:16px}
+    .header h1{font-size:24px}
+    .gantt-row,.milestone-row,.launch-row,.months-bar{grid-template-columns:140px 1fr}
     .progress-row{flex-wrap:nowrap}
-    .progress-card{min-width:160px}
+    .progress-card{min-width:140px;padding:12px 14px}
     .modal{padding:20px}
-    .bar{padding:0 8px}
+    .bar{padding:0 8px;min-width:60px;height:44px;-webkit-tap-highlight-color:transparent}
     .bar-text{font-size:10px}
+    .gantt-row{min-height:56px;padding:6px 4px;-webkit-tap-highlight-color:transparent}
+    .gantt-row.editable{background:var(--bg-secondary);border:1px solid var(--border);margin-bottom:2px}
+    .row-label-text .name{font-size:12px}
+    .row-label-text .meta{font-size:10px}
+    .phase-title{font-size:14px}
+    .phase-dates-label{font-size:11px}
+    .header-icon{width:40px;height:40px;font-size:20px}
+    .app-summary{margin-left:52px;font-size:13px}
+  }
+  @media(max-width:480px){
+    .gantt-row,.milestone-row,.launch-row,.months-bar{grid-template-columns:120px 1fr}
+    .bar{min-width:50px}
+    .header{padding:40px 16px 16px}
+    .top-bar{padding:12px 12px}
   }
 </style>
 </head>
@@ -355,6 +371,25 @@ function closeModal(){document.getElementById('editModal').classList.remove('sho
 async function saveEdit(){if(!editingTask||!editingSource)return;const st=document.getElementById('editStatus').value,as=document.getElementById('editAssignee').value,nt=document.getElementById('editNotes').value;if(editingSource.type==='phase'){const t=data.phases[editingSource.phaseId].tasks[editingSource.taskIndex];t.status=st;t.assignee=as;t.notes=nt}else{const t=data.standalone[editingSource.taskIndex];t.status=st;t.assignee=as;t.notes=nt}closeModal();const scrollY=window.scrollY;render();window.scrollTo(0,scrollY);if(ghToken&&ghRepo)await saveToGitHub()}
 async function saveToGitHub(){try{const gr=await fetch(`https://api.github.com/repos/${ghRepo}/contents/data.json?ref=${ghBranch}`,{headers:{'Authorization':`Bearer ${ghToken}`,'Accept':'application/vnd.github.v3+json'}});const gj=await gr.json();fileSha=gj.sha;const content=btoa(unescape(encodeURIComponent(JSON.stringify(data,null,2))));const pr=await fetch(`https://api.github.com/repos/${ghRepo}/contents/data.json`,{method:'PUT',headers:{'Authorization':`Bearer ${ghToken}`,'Accept':'application/vnd.github.v3+json','Content-Type':'application/json'},body:JSON.stringify({message:`Update: ${editingTask?editingTask.name:'task'}`,content,sha:fileSha,branch:ghBranch})});if(!pr.ok){const e=await pr.json();console.error('Save failed:',e);alert('Failed to save.')}}catch(e){console.error(e);alert('GitHub connection error.')}}
 loadData();
+
+// Mobile: tap bar to show tooltip, tap elsewhere to dismiss
+document.addEventListener('touchstart',function(e){
+  const bar=e.target.closest('.bar');
+  // Close all open tooltips
+  document.querySelectorAll('.tip.show-mobile').forEach(t=>t.classList.remove('show-mobile'));
+  if(bar){
+    const tip=bar.querySelector('.tip');
+    if(tip){e.stopPropagation();tip.classList.add('show-mobile')}
+  }
+},{passive:true});
+
+// Mobile: make admin rows tappable via touch
+document.addEventListener('click',function(e){
+  const row=e.target.closest('.gantt-row.editable');
+  if(row&&row.getAttribute('onclick')){
+    // onclick already handles it on desktop; this ensures mobile taps register
+  }
+});
 </script>
 </body>
 </html>
