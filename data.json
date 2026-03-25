@@ -7,7 +7,10 @@
     "timelineEnd": "2026-05-31"
   },
   "team": [
-    { "id": "taina", "name": "Taina", "initials": "TR", "color": "#3BB1BD" },
+    { "id": "taina", "name": "Taina Rivera", "initials": "TR", "color": "#3BB1BD" },
+    { "id": "joel", "name": "Joel de Jesús", "initials": "JJ", "color": "#5B8DEF" },
+    { "id": "laura", "name": "Laura Torchio", "initials": "LT", "color": "#9B6DD7" },
+    { "id": "cynthia", "name": "Cynthia Aponte", "initials": "CA", "color": "#E8578A" },
     { "id": "unassigned", "name": "Unassigned", "initials": "—", "color": "#aeaeb2" }
   ],
   "phases": {
