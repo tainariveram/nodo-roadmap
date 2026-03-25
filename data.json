@@ -1,0 +1,299 @@
+{
+  "config": {
+    "title": "Nodo App",
+    "subtitle": "Roadmap — Marzo → Mayo 2026",
+    "summary": "Plataforma central para gestionar clientes, contratos y operaciones en tiempo real, conectando la planificación del servicio con su ejecución diaria.",
+    "timelineStart": "2026-03-01",
+    "timelineEnd": "2026-05-31"
+  },
+  "team": [
+    { "id": "taina", "name": "Taina", "initials": "TR", "color": "#3BB1BD" },
+    { "id": "unassigned", "name": "Unassigned", "initials": "—", "color": "#aeaeb2" }
+  ],
+  "phases": {
+    "fase-1": {
+      "name": "Fase 1 — Build",
+      "dates": "Mar 11 → Mar 31",
+      "color": "#3BB1BD",
+      "result": "Nodo v1 listo para validación",
+      "tasks": [
+        {
+          "id": "epic-1",
+          "name": "EPIC 1 — Base UI / Layout",
+          "meta": "",
+          "description": "Estructura base: navegación, layout global y componentes visuales reutilizables.",
+          "startDate": "2026-03-11",
+          "endDate": "2026-03-12",
+          "status": "done",
+          "assignee": "",
+          "notes": ""
+        },
+        {
+          "id": "epic-2",
+          "name": "EPIC 2 — Ops Hub",
+          "meta": "Asignaciones · Ausencias · Banca",
+          "description": "Centro operativo para gestionar asignaciones, ausencias y banca de personal en tiempo real.",
+          "startDate": "2026-03-12",
+          "endDate": "2026-03-17",
+          "status": "done",
+          "assignee": "",
+          "notes": ""
+        },
+        {
+          "id": "epic-3",
+          "name": "EPIC 3 — Clientes",
+          "meta": "Ficha · Contactos · Sucursales · Docs",
+          "description": "Gestión completa del cliente: ficha, contactos, sucursales y documentos.",
+          "startDate": "2026-03-21",
+          "endDate": "2026-03-24",
+          "status": "done",
+          "assignee": "",
+          "notes": ""
+        },
+        {
+          "id": "epic-6",
+          "name": "EPIC 6 — Dashboard",
+          "meta": "",
+          "description": "Vista resumida con métricas clave, actividad reciente y accesos rápidos por rol.",
+          "startDate": "2026-03-25",
+          "endDate": "2026-03-26",
+          "status": "in_progress",
+          "assignee": "",
+          "notes": ""
+        },
+        {
+          "id": "epic-5",
+          "name": "EPIC 5 — Tickets",
+          "meta": "",
+          "description": "Gestión de incidencias y solicitudes operativas con seguimiento en tiempo real.",
+          "startDate": "2026-03-27",
+          "endDate": "2026-03-30",
+          "status": "pending",
+          "assignee": "",
+          "notes": ""
+        },
+        {
+          "id": "epic-4",
+          "name": "EPIC 4 — Contratos",
+          "meta": "Estructura operativa · Requerimientos · Compromisos ocasionales",
+          "description": "Estructura operativa: contratos, requerimientos y compromisos ocasionales (semanal, mensual, trimestral).",
+          "startDate": "2026-03-30",
+          "endDate": "2026-03-31",
+          "status": "pending",
+          "assignee": "",
+          "notes": ""
+        }
+      ]
+    },
+    "fase-1.5": {
+      "name": "Fase 1.5 — Testing & Stabilization",
+      "dates": "Abr 1 → Abr 14",
+      "color": "#9B6DD7",
+      "result": "Sistema estable",
+      "flow": ["Cliente", "Contrato", "Sucursal", "Requerimiento", "Asignación", "Ticket", "Dashboard"],
+      "tasks": [
+        {
+          "id": "user-testing",
+          "name": "User Testing",
+          "meta": "Validación de flujos · Observación de uso",
+          "description": "Primera ronda de pruebas con Operaciones: validación de flujos reales y observación de uso.",
+          "startDate": "2026-04-01",
+          "endDate": "2026-04-04",
+          "status": "pending",
+          "assignee": "",
+          "notes": ""
+        },
+        {
+          "id": "iteraciones",
+          "name": "Iteraciones",
+          "meta": "Fixes UX/bugs · Ajustes de flujos · Edge cases",
+          "description": "Corrección de bugs, ajustes de flujos, estados vacíos, edge cases y warnings básicos.",
+          "startDate": "2026-04-05",
+          "endDate": "2026-04-12",
+          "status": "pending",
+          "assignee": "",
+          "notes": "",
+          "striped": true
+        },
+        {
+          "id": "validacion-e2e",
+          "name": "Validación end-to-end",
+          "meta": "Reglas visuales · Warnings básicos",
+          "description": "Prueba completa del flujo Cliente → Contrato → Ops → Ticket → Dashboard.",
+          "startDate": "2026-04-12",
+          "endDate": "2026-04-14",
+          "status": "pending",
+          "assignee": "",
+          "notes": ""
+        }
+      ]
+    },
+    "fase-2": {
+      "name": "Fase 2 — Control",
+      "dates": "Abr 1 → Abr 30",
+      "color": "#E8A838",
+      "result": "Control operativo",
+      "tasks": [
+        {
+          "id": "epic-7",
+          "name": "EPIC 7 — Cobertura & SLA",
+          "meta": "Requerido vs asignado · Estados",
+          "description": "Comparación requerido vs asignado con estados: completo, parcial o faltante.",
+          "startDate": "2026-04-01",
+          "endDate": "2026-04-10",
+          "status": "pending",
+          "assignee": "",
+          "notes": ""
+        },
+        {
+          "id": "epic-8",
+          "name": "EPIC 8 — Alertas",
+          "meta": "Falta personal · Tickets críticos · Vencimientos",
+          "description": "Notificaciones de eventos críticos: falta de personal, tickets urgentes y contratos por vencer.",
+          "startDate": "2026-04-10",
+          "endDate": "2026-04-20",
+          "status": "pending",
+          "assignee": "",
+          "notes": ""
+        },
+        {
+          "id": "epic-9",
+          "name": "EPIC 9 — Refinamiento UX",
+          "meta": "Filtros · Acciones rápidas · Integración tickets + SLA",
+          "description": "Mejora de UX operativa: filtros avanzados, acciones rápidas e integración con tickets y SLA.",
+          "startDate": "2026-04-20",
+          "endDate": "2026-04-30",
+          "status": "pending",
+          "assignee": "",
+          "notes": ""
+        }
+      ]
+    },
+    "fase-3": {
+      "name": "Fase 3 — Escalamiento",
+      "dates": "Post Mayo",
+      "color": "#3BDB96",
+      "result": "Optimización continua",
+      "tasks": [
+        {
+          "id": "epic-11",
+          "name": "EPIC 11 — Reportes & Analytics",
+          "meta": "KPIs · Performance · Tendencias · Métricas",
+          "description": "KPIs, performance, tendencias y métricas operativas para decisiones basadas en datos.",
+          "startDate": "2026-05-01",
+          "endDate": "2026-05-31",
+          "status": "pending",
+          "assignee": "",
+          "notes": ""
+        }
+      ]
+    },
+    "post-launch": {
+      "name": "Post-Launch — Next Features",
+      "dates": "Mayo+",
+      "color": "#5B8DEF",
+      "result": "Pipeline completo",
+      "tasks": [
+        {
+          "id": "epic-12",
+          "name": "EPIC 12 — Onboarding (Kanban)",
+          "meta": "Pipeline cliente → contrato → operación · Vista Kanban · Bridge ventas → ops",
+          "description": "Pipeline visual tipo Kanban para activación de clientes: de ventas a operación.",
+          "startDate": "2026-05-08",
+          "endDate": "2026-05-31",
+          "status": "pending",
+          "assignee": "",
+          "notes": "",
+          "dashed": true
+        }
+      ]
+    }
+  },
+  "standalone": [
+    {
+      "id": "apis",
+      "name": "APIs — Integraciones",
+      "meta": "QuickBooks · Gestión Humana",
+      "description": "Conexión con QuickBooks y Gestión Humana antes del lanzamiento oficial.",
+      "startDate": "2026-04-15",
+      "endDate": "2026-04-30",
+      "color": "#3BB1BD",
+      "opacity": 0.7,
+      "status": "pending",
+      "assignee": "",
+      "notes": ""
+    }
+  ],
+  "milestones": [
+    {
+      "id": "build-complete",
+      "name": "Build Complete",
+      "sub": "Todos los EPICs de Fase 1 finalizados",
+      "date": "2026-03-31",
+      "dateLabel": "Mar 31",
+      "color": "#3BB1BD",
+      "type": "milestone"
+    },
+    {
+      "id": "user-testing-start",
+      "name": "User Testing Begins",
+      "sub": "Primera validación con Operaciones",
+      "date": "2026-04-01",
+      "dateLabel": "Abr 1",
+      "color": "#E8A838",
+      "type": "milestone"
+    },
+    {
+      "id": "system-stable",
+      "name": "System Stable",
+      "sub": "Testing completado · Bugs críticos resueltos",
+      "date": "2026-04-14",
+      "dateLabel": "Abr 14",
+      "color": "#9B6DD7",
+      "type": "milestone"
+    },
+    {
+      "id": "soft-launch",
+      "name": "Soft Launch — Nodo 1.0",
+      "sub": "Versión funcional · Uso interno (Ops) · Core flows activos",
+      "date": "2026-04-15",
+      "dateLabel": "Abr 15",
+      "color": "#E8A838",
+      "type": "launch"
+    },
+    {
+      "id": "apis-ready",
+      "name": "APIs Ready & Control Complete",
+      "sub": "Integraciones conectadas · Fase 2 finalizada",
+      "date": "2026-04-30",
+      "dateLabel": "Abr 30",
+      "color": "#E8A838",
+      "type": "milestone"
+    },
+    {
+      "id": "official-launch",
+      "name": "Official Launch — Nodo 1.0",
+      "sub": "APIs integradas · Sistema conectado · Ready for scale",
+      "date": "2026-05-01",
+      "dateLabel": "May 1",
+      "color": "#3BDB96",
+      "type": "launch"
+    }
+  ],
+  "layout": [
+    { "type": "phase", "id": "fase-1" },
+    { "type": "milestone", "id": "build-complete" },
+    { "type": "milestone", "id": "user-testing-start" },
+    { "type": "parallel-start", "label": "En paralelo — Abr 1 → Abr 30" },
+    { "type": "phase", "id": "fase-1.5" },
+    { "type": "milestone", "id": "system-stable" },
+    { "type": "phase", "id": "fase-2" },
+    { "type": "parallel-end" },
+    { "type": "launch", "id": "soft-launch" },
+    { "type": "standalone", "id": "apis" },
+    { "type": "milestone", "id": "apis-ready" },
+    { "type": "launch", "id": "official-launch" },
+    { "type": "phase", "id": "fase-3" },
+    { "type": "phase", "id": "post-launch" }
+  ]
+}
