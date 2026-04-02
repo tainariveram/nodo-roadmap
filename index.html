@@ -85,6 +85,31 @@
   .col-div{border-left:1px dashed var(--col-line)}
   .col-div:first-child{border-left:none}
 
+  .sprint-banner{
+    display:grid;grid-template-columns:220px 1fr;align-items:center;
+    margin-bottom:16px;padding:0 8px;
+  }
+  .sprint-label-area{display:flex;align-items:center;gap:10px;padding-right:12px}
+  .sprint-icon{width:28px;height:28px;border-radius:8px;display:flex;align-items:center;justify-content:center;font-size:11px;font-weight:800;color:#fff;flex-shrink:0}
+  .sprint-info{display:flex;flex-direction:column}
+  .sprint-name{font-size:13px;font-weight:700;letter-spacing:-.1px}
+  .sprint-dates{font-size:11px;color:var(--text-tertiary)}
+  .sprint-tasks-label{font-size:10px;color:var(--text-tertiary);margin-top:1px}
+  .sprint-track{position:relative;height:32px}
+  .sprint-band{
+    position:absolute;height:100%;border-radius:8px;
+    opacity:.12;top:0;
+  }
+  .sprint-band-border{
+    position:absolute;height:100%;border-radius:8px;top:0;
+    border:2px dashed;opacity:.4;
+  }
+  .sprint-band-label{
+    position:absolute;top:50%;transform:translateY(-50%);
+    font-size:10px;font-weight:700;letter-spacing:.5px;text-transform:uppercase;
+    padding:0 8px;white-space:nowrap;
+  }
+
   .phase{margin-bottom:24px}
   .phase-card{
     background:var(--card-bg);border:1px solid var(--card-border);
@@ -288,6 +313,7 @@
     </div>
     <div class="modal-field"><label>Status</label><select id="editStatus"><option value="pending">Pending</option><option value="in_progress">In Progress</option><option value="done">Done</option><option value="behind">Behind Schedule</option></select></div>
     <div class="modal-field"><label>Assignee</label><select id="editAssignee"></select></div>
+    <div style="display:flex;gap:12px"><div class="modal-field" style="flex:1"><label>Start Date</label><input id="editStartDate" type="date" /></div><div class="modal-field" style="flex:1"><label>End Date</label><input id="editEndDate" type="date" /></div></div>
     <div class="modal-field"><label>Notes</label><textarea id="editNotes" placeholder="Add a note..."></textarea></div>
     <div class="modal-actions"><button class="btn btn-secondary" onclick="closeModal()">Cancel</button><button class="btn btn-primary" onclick="saveEdit()">Save</button></div>
   </div>
@@ -301,6 +327,17 @@
     <div class="modal-field"><label>Token</label><input id="tokenInput" type="password" placeholder="ghp_xxxxxxxxxxxx" /></div>
     <div class="modal-field"><label>Branch (optional)</label><input id="tokenBranch" placeholder="main" value="main" /></div>
     <div class="modal-actions"><button class="btn btn-secondary" onclick="closeTokenModal()">Cancel</button><button class="btn btn-primary" onclick="saveToken()">Connect</button></div>
+  </div>
+</div>
+
+<div class="modal-overlay" id="sprintModal">
+  <div class="modal">
+    <h3 id="sprintModalTitle">New Sprint</h3>
+    <div class="modal-field"><label>Sprint Name</label><input id="sprintName" placeholder="Sprint 2" /></div>
+    <div style="display:flex;gap:12px"><div class="modal-field" style="flex:1"><label>Start Date</label><input id="sprintStart" type="date" /></div><div class="modal-field" style="flex:1"><label>End Date</label><input id="sprintEnd" type="date" /></div></div>
+    <div class="modal-field"><label>Color</label><select id="sprintColor"><option value="#5B8DEF">Blue</option><option value="#3BB1BD">Aqua</option><option value="#9B6DD7">Purple</option><option value="#E8A838">Amber</option><option value="#3BDB96">Green</option><option value="#E8578A">Pink</option></select></div>
+    <div class="modal-field"><label>EPICs in this Sprint</label><div id="sprintTaskChecks" style="max-height:180px;overflow-y:auto;padding:8px 0"></div></div>
+    <div class="modal-actions"><button class="btn btn-secondary" onclick="closeSprintModal()">Cancel</button><button class="btn btn-secondary" onclick="deleteSprint()" id="sprintDeleteBtn" style="color:var(--status-behind);display:none">Delete</button><button class="btn btn-primary" onclick="saveSprint()">Save</button></div>
   </div>
 </div>
 
@@ -330,6 +367,9 @@ function render(){
   h+=`<div class="timeline"><div class="months-bar"><div class="months-bar-label">Tasks</div><div class="months-track"><div class="month-label">Marzo</div><div class="month-label">Abril</div><div class="month-label">Mayo</div></div></div><div style="position:relative">`;
   h+=`<div style="display:grid;grid-template-columns:220px 1fr;position:absolute;top:0;bottom:0;left:0;right:0;pointer-events:none;z-index:1"><div></div><div class="col-dividers"><div class="col-div"></div><div class="col-div"></div><div class="col-div"></div></div></div>`;
   h+=`<div style="display:grid;grid-template-columns:220px 1fr;position:absolute;top:0;bottom:0;left:0;right:0;pointer-events:none;z-index:5"><div></div><div style="position:relative"><div class="today-line" style="left:${tp}%"><div class="today-dot"></div><div class="today-label">Hoy</div></div></div></div>`;
+  // Render sprints
+  if(data.sprints&&data.sprints.length){data.sprints.forEach((s,i)=>{h+=renderSprint(s,i)})}
+  if(adminMode){h+=`<div class="sprint-banner" onclick="openSprintEdit(-1)" style="cursor:pointer;opacity:.6"><div class="sprint-label-area"><div class="sprint-icon" style="background:var(--text-tertiary)">+</div><div class="sprint-info"><span class="sprint-name" style="color:var(--text-tertiary)">Add Sprint</span></div></div><div class="sprint-track"></div></div>`}
   for(const item of data.layout){
     if(item.type==='phase')h+=renderPhase(item.id);
     else if(item.type==='milestone'){const m=data.milestones.find(x=>x.id===item.id);if(m)h+=renderMilestone(m)}
@@ -363,13 +403,82 @@ function renderMilestone(m){const left=dayPos(m.date);return`<div class="milesto
 function renderLaunch(m){const left=dayPos(m.date),type=m.id.includes('soft')?'soft':'official',letter=type==='soft'?'S':'O';return`<div class="launch-row ${type}"><div class="launch-label-area"><div class="launch-icon ${type}">${letter}</div><div class="launch-info"><span class="launch-title" style="color:${m.color}">${m.name}</span><span class="launch-subtitle">${m.sub}</span></div></div><div class="launch-track"><div class="launch-pip" style="left:${left}%"><div class="launch-diamond ${type}"></div><span class="launch-date-badge ${type}">${m.dateLabel}</span></div></div></div>`}
 function renderStandalone(task){const left=dayPos(task.startDate),width=dayWidth(task.startDate,task.endDate),s=sc(task.status),member=getTeam(task.assignee),idx=data.standalone.indexOf(task);const rowClick=adminMode?`onclick="openEdit('standalone','',${idx})"`:'';const ec=adminMode?' editable':'';const op=task.opacity?`;opacity:${task.opacity}`:'';return`<div class="gantt-row${ec}" style="margin:4px 0" ${rowClick}><div class="row-label"><div class="status-dot status-${s}"></div><div class="row-label-text"><div class="name">${task.name}</div>${task.meta?`<div class="meta">${task.meta}</div>`:''}<div class="due">Entrega: ${fmtShort(task.endDate)}</div></div></div><div class="row-track"><div class="bar ${s}" style="left:${left}%;width:${width}%;background:${task.color}${op}"><div class="bar-content"><div class="bar-text">${task.name}</div></div>${member?`<div class="bar-avatar" title="${member.name}">${member.initials}</div>`:''}<div class="tip"><div class="tip-name">${task.name}</div><div class="tip-dates">${fmtRange(task.startDate,task.endDate)}</div><div class="tip-desc">${task.description}</div><div class="tip-meta"><div class="tip-tag" style="background:var(--status-${s})">${s.replace('_',' ')}</div></div>${task.notes?`<div class="tip-notes">"${task.notes}"</div>`:''}</div></div></div></div>`}
 
+function renderSprint(sprint,idx){
+  const left=dayPos(sprint.startDate),width=dayWidth(sprint.startDate,sprint.endDate),c=sprint.color;
+  const taskNames=[];
+  (sprint.tasks||[]).forEach(tid=>{
+    for(const pid of Object.keys(data.phases)){
+      const found=data.phases[pid].tasks.find(t=>t.id===tid);
+      if(found){taskNames.push(found.name.split('—').pop().trim());break}
+    }
+    const sa=(data.standalone||[]).find(t=>t.id===tid);
+    if(sa)taskNames.push(sa.name.split('—').pop().trim());
+  });
+  const num=sprint.name.replace(/[^0-9]/g,'')||'S';
+  const click=adminMode?`onclick="openSprintEdit(${idx})" style="cursor:pointer"`:'';
+  return`<div class="sprint-banner" ${click}><div class="sprint-label-area"><div class="sprint-icon" style="background:${c}">${num}</div><div class="sprint-info"><span class="sprint-name" style="color:${c}">${sprint.name}</span><span class="sprint-dates">${fmtRange(sprint.startDate,sprint.endDate)}</span><span class="sprint-tasks-label">${taskNames.join(' · ')}</span></div></div><div class="sprint-track"><div class="sprint-band" style="left:${left}%;width:${width}%;background:${c}"></div><div class="sprint-band-border" style="left:${left}%;width:${width}%;border-color:${c}"></div><div class="sprint-band-label" style="left:${left}%;color:${c}">Sprint ${num}</div></div></div>`;
+}
+
 function toggleAdmin(){if(!adminMode&&!ghToken){document.getElementById('tokenModal').classList.add('show');return}adminMode=!adminMode;document.getElementById('adminToggle').classList.toggle('active',adminMode);document.getElementById('adminBadge').classList.toggle('show',adminMode);render()}
 function saveToken(){ghRepo=document.getElementById('tokenRepo').value.trim();ghToken=document.getElementById('tokenInput').value.trim();ghBranch=document.getElementById('tokenBranch').value.trim()||'main';if(!ghRepo||!ghToken)return;document.getElementById('tokenModal').classList.remove('show');adminMode=true;document.getElementById('adminToggle').classList.add('active');document.getElementById('adminBadge').classList.add('show');render()}
 function closeTokenModal(){document.getElementById('tokenModal').classList.remove('show')}
-function openEdit(type,pid,idx){if(!adminMode)return;let task;if(type==='phase'){task=data.phases[pid].tasks[idx];editingSource={type,phaseId:pid,taskIndex:idx}}else{task=data.standalone[idx];editingSource={type,phaseId:'',taskIndex:idx}}editingTask=task;document.getElementById('editTitle').textContent=task.name;document.getElementById('editStatus').value=task.status||'pending';document.getElementById('editNotes').value=task.notes||'';const sel=document.getElementById('editAssignee');sel.innerHTML='<option value="">Unassigned</option>';(data.team||[]).filter(t=>t.id!=='unassigned').forEach(t=>{sel.innerHTML+=`<option value="${t.id}" ${task.assignee===t.id?'selected':''}>${t.name}</option>`});document.getElementById('editModal').classList.add('show')}
+function openEdit(type,pid,idx){if(!adminMode)return;let task;if(type==='phase'){task=data.phases[pid].tasks[idx];editingSource={type,phaseId:pid,taskIndex:idx}}else{task=data.standalone[idx];editingSource={type,phaseId:'',taskIndex:idx}}editingTask=task;document.getElementById('editTitle').textContent=task.name;document.getElementById('editStatus').value=task.status||'pending';document.getElementById('editNotes').value=task.notes||'';document.getElementById('editStartDate').value=task.startDate||'';document.getElementById('editEndDate').value=task.endDate||'';const sel=document.getElementById('editAssignee');sel.innerHTML='<option value="">Unassigned</option>';(data.team||[]).filter(t=>t.id!=='unassigned').forEach(t=>{sel.innerHTML+=`<option value="${t.id}" ${task.assignee===t.id?'selected':''}>${t.name}</option>`});document.getElementById('editModal').classList.add('show')}
 function closeModal(){document.getElementById('editModal').classList.remove('show');editingTask=null;editingSource=null}
-async function saveEdit(){if(!editingTask||!editingSource)return;const st=document.getElementById('editStatus').value,as=document.getElementById('editAssignee').value,nt=document.getElementById('editNotes').value;if(editingSource.type==='phase'){const t=data.phases[editingSource.phaseId].tasks[editingSource.taskIndex];t.status=st;t.assignee=as;t.notes=nt}else{const t=data.standalone[editingSource.taskIndex];t.status=st;t.assignee=as;t.notes=nt}closeModal();const scrollY=window.scrollY;render();window.scrollTo(0,scrollY);if(ghToken&&ghRepo)await saveToGitHub()}
+async function saveEdit(){if(!editingTask||!editingSource)return;const st=document.getElementById('editStatus').value,as=document.getElementById('editAssignee').value,nt=document.getElementById('editNotes').value,sd=document.getElementById('editStartDate').value,ed=document.getElementById('editEndDate').value;if(editingSource.type==='phase'){const t=data.phases[editingSource.phaseId].tasks[editingSource.taskIndex];t.status=st;t.assignee=as;t.notes=nt;if(sd)t.startDate=sd;if(ed)t.endDate=ed}else{const t=data.standalone[editingSource.taskIndex];t.status=st;t.assignee=as;t.notes=nt;if(sd)t.startDate=sd;if(ed)t.endDate=ed}closeModal();const scrollY=window.scrollY;render();window.scrollTo(0,scrollY);if(ghToken&&ghRepo)await saveToGitHub()}
 async function saveToGitHub(){try{const gr=await fetch(`https://api.github.com/repos/${ghRepo}/contents/data.json?ref=${ghBranch}`,{headers:{'Authorization':`Bearer ${ghToken}`,'Accept':'application/vnd.github.v3+json'}});const gj=await gr.json();fileSha=gj.sha;const content=btoa(unescape(encodeURIComponent(JSON.stringify(data,null,2))));const pr=await fetch(`https://api.github.com/repos/${ghRepo}/contents/data.json`,{method:'PUT',headers:{'Authorization':`Bearer ${ghToken}`,'Accept':'application/vnd.github.v3+json','Content-Type':'application/json'},body:JSON.stringify({message:`Update: ${editingTask?editingTask.name:'task'}`,content,sha:fileSha,branch:ghBranch})});if(!pr.ok){const e=await pr.json();console.error('Save failed:',e);alert('Failed to save.')}}catch(e){console.error(e);alert('GitHub connection error.')}}
+let editingSprintIdx=-1;
+function getAllTasks(){
+  const tasks=[];
+  for(const pid of Object.keys(data.phases)){data.phases[pid].tasks.forEach(t=>tasks.push({id:t.id,name:t.name}))}
+  (data.standalone||[]).forEach(t=>tasks.push({id:t.id,name:t.name}));
+  return tasks;
+}
+function openSprintEdit(idx){
+  if(!adminMode)return;
+  editingSprintIdx=idx;
+  const isNew=idx===-1;
+  document.getElementById('sprintModalTitle').textContent=isNew?'New Sprint':'Edit Sprint';
+  document.getElementById('sprintDeleteBtn').style.display=isNew?'none':'inline-flex';
+  const sprint=isNew?{name:'',startDate:'',endDate:'',color:'#5B8DEF',tasks:[]}:data.sprints[idx];
+  document.getElementById('sprintName').value=sprint.name;
+  document.getElementById('sprintStart').value=sprint.startDate;
+  document.getElementById('sprintEnd').value=sprint.endDate;
+  document.getElementById('sprintColor').value=sprint.color;
+  // Build task checkboxes
+  const checks=document.getElementById('sprintTaskChecks');
+  checks.innerHTML='';
+  getAllTasks().forEach(t=>{
+    const checked=(sprint.tasks||[]).includes(t.id)?'checked':'';
+    checks.innerHTML+=`<label style="display:flex;align-items:center;gap:8px;padding:6px 4px;font-size:13px;cursor:pointer;border-radius:8px;transition:background .2s"><input type="checkbox" value="${t.id}" ${checked} style="width:16px;height:16px;accent-color:var(--accent)"> ${t.name}</label>`;
+  });
+  document.getElementById('sprintModal').classList.add('show');
+}
+function closeSprintModal(){document.getElementById('sprintModal').classList.remove('show');editingSprintIdx=-1}
+async function saveSprint(){
+  const name=document.getElementById('sprintName').value.trim();
+  const sd=document.getElementById('sprintStart').value;
+  const ed=document.getElementById('sprintEnd').value;
+  const color=document.getElementById('sprintColor').value;
+  if(!name||!sd||!ed)return alert('Name and dates are required');
+  const tasks=Array.from(document.querySelectorAll('#sprintTaskChecks input:checked')).map(c=>c.value);
+  if(!data.sprints)data.sprints=[];
+  if(editingSprintIdx===-1){
+    const id='sprint-'+(data.sprints.length+1);
+    data.sprints.push({id,name,startDate:sd,endDate:ed,color,tasks});
+  }else{
+    const s=data.sprints[editingSprintIdx];
+    s.name=name;s.startDate=sd;s.endDate=ed;s.color=color;s.tasks=tasks;
+  }
+  closeSprintModal();const scrollY=window.scrollY;render();window.scrollTo(0,scrollY);
+  if(ghToken&&ghRepo)await saveToGitHub();
+}
+async function deleteSprint(){
+  if(editingSprintIdx<0)return;
+  if(!confirm('Delete this sprint?'))return;
+  data.sprints.splice(editingSprintIdx,1);
+  closeSprintModal();const scrollY=window.scrollY;render();window.scrollTo(0,scrollY);
+  if(ghToken&&ghRepo)await saveToGitHub();
+}
 loadData();
 
 // Mobile: tap bar to show tooltip OR open edit modal in admin mode
