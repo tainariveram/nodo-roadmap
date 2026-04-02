@@ -74,17 +74,17 @@
   .months-bar{
     display:grid;grid-template-columns:220px 1fr;margin-bottom:20px;
     position:sticky;top:0;z-index:100;
-    background:var(--bg);padding:8px 0 0;
+    background:var(--bg);padding:8px 0 4px;
     border-bottom:1px solid var(--border);transition:background .4s;
   }
   .months-bar-label{font-size:11px;font-weight:600;color:var(--text-tertiary);text-transform:uppercase;letter-spacing:.8px;padding:4px 0;display:flex;flex-direction:column;justify-content:flex-end}
-  .months-track{position:relative;display:flex;flex-direction:column}
+  .months-track{position:relative;display:flex;flex-direction:column;overflow:visible}
   .months-row{display:grid;grid-template-columns:repeat(3,1fr)}
-  .month-label{font-size:11px;font-weight:600;letter-spacing:.8px;color:var(--text-tertiary);padding:2px 0 2px 8px;text-transform:uppercase}
-  .weeks-row{display:flex;width:100%}
-  .week-cell{flex:1;text-align:center;font-size:9px;font-weight:600;color:var(--text-tertiary);padding:3px 0;border-left:1px solid var(--col-line);letter-spacing:.3px;opacity:.7}
+  .month-label{font-size:11px;font-weight:600;letter-spacing:.8px;color:var(--text-tertiary);padding:2px 0 4px 8px;text-transform:uppercase}
+  .weeks-row{display:flex;width:100%;border-top:1px solid var(--col-line)}
+  .week-cell{text-align:center;font-size:9px;font-weight:600;color:var(--text-tertiary);padding:4px 0;border-left:1px solid var(--col-line);letter-spacing:.3px}
   .week-cell:first-child{border-left:none}
-  .week-cell.current{color:var(--today-color);opacity:1;font-weight:700}
+  .week-cell.current{color:var(--today-color);font-weight:700;background:rgba(255,71,87,.06)}
 
   .col-dividers{position:absolute;top:0;bottom:0;left:0;right:0;display:grid;grid-template-columns:repeat(3,1fr);pointer-events:none;z-index:1}
   .col-div{border-left:1px dashed var(--col-line)}
