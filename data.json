@@ -58,10 +58,10 @@
           "name": "EPIC 6 — Dashboard",
           "meta": "Métricas clave · Actividad · Accesos rápidos",
           "description": "Vista resumida con métricas clave, actividad reciente y accesos rápidos por rol.",
-          "startDate": "2026-03-25",
-          "endDate": "2026-03-26",
-          "status": "in_progress",
-          "assignee": "",
+          "startDate": "2026-04-06",
+          "endDate": "2026-04-08",
+          "status": "pending",
+          "assignee": "taina",
           "notes": ""
         },
         {
@@ -69,10 +69,10 @@
           "name": "EPIC 5 — Tickets",
           "meta": "Incidencias · Solicitudes · Seguimiento",
           "description": "Gestión de incidencias y solicitudes operativas con seguimiento en tiempo real.",
-          "startDate": "2026-03-27",
-          "endDate": "2026-03-30",
+          "startDate": "2026-04-02",
+          "endDate": "2026-04-08",
           "status": "pending",
-          "assignee": "",
+          "assignee": "joel",
           "notes": ""
         },
         {
@@ -80,10 +80,10 @@
           "name": "EPIC 4 — Contratos",
           "meta": "Estructura operativa · Requerimientos · Compromisos ocasionales",
           "description": "Estructura operativa: contratos, requerimientos y compromisos ocasionales (semanal, mensual, trimestral).",
-          "startDate": "2026-03-30",
-          "endDate": "2026-03-31",
+          "startDate": "2026-04-09",
+          "endDate": "2026-04-10",
           "status": "pending",
-          "assignee": "",
+          "assignee": "joel",
           "notes": ""
         }
       ]
@@ -100,10 +100,10 @@
           "name": "User Testing",
           "meta": "Validación de flujos · Observación de uso",
           "description": "Primera ronda de pruebas con Operaciones: validación de flujos reales y observación de uso.",
-          "startDate": "2026-04-01",
-          "endDate": "2026-04-04",
+          "startDate": "2026-04-13",
+          "endDate": "2026-04-15",
           "status": "pending",
-          "assignee": "",
+          "assignee": "laura",
           "notes": ""
         },
         {
