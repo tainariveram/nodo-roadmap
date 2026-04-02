@@ -74,12 +74,17 @@
   .months-bar{
     display:grid;grid-template-columns:220px 1fr;margin-bottom:20px;
     position:sticky;top:0;z-index:100;
-    background:var(--bg);padding:12px 0;
+    background:var(--bg);padding:8px 0 0;
     border-bottom:1px solid var(--border);transition:background .4s;
   }
-  .months-bar-label{font-size:11px;font-weight:600;color:var(--text-tertiary);text-transform:uppercase;letter-spacing:.8px;padding:4px 0}
-  .months-track{display:grid;grid-template-columns:repeat(3,1fr);position:relative}
-  .month-label{font-size:11px;font-weight:600;letter-spacing:.8px;color:var(--text-tertiary);padding:4px 0 4px 8px;text-transform:uppercase}
+  .months-bar-label{font-size:11px;font-weight:600;color:var(--text-tertiary);text-transform:uppercase;letter-spacing:.8px;padding:4px 0;display:flex;flex-direction:column;justify-content:flex-end}
+  .months-track{position:relative;display:flex;flex-direction:column}
+  .months-row{display:grid;grid-template-columns:repeat(3,1fr)}
+  .month-label{font-size:11px;font-weight:600;letter-spacing:.8px;color:var(--text-tertiary);padding:2px 0 2px 8px;text-transform:uppercase}
+  .weeks-row{display:flex;width:100%}
+  .week-cell{flex:1;text-align:center;font-size:9px;font-weight:600;color:var(--text-tertiary);padding:3px 0;border-left:1px solid var(--col-line);letter-spacing:.3px;opacity:.7}
+  .week-cell:first-child{border-left:none}
+  .week-cell.current{color:var(--today-color);opacity:1;font-weight:700}
 
   .col-dividers{position:absolute;top:0;bottom:0;left:0;right:0;display:grid;grid-template-columns:repeat(3,1fr);pointer-events:none;z-index:1}
   .col-div{border-left:1px dashed var(--col-line)}
@@ -265,7 +270,8 @@
   @media(max-width:768px){
     .header,.timeline,.legend,.progress-row{padding-left:16px;padding-right:16px}
     .header h1{font-size:24px}
-    .gantt-row,.milestone-row,.launch-row,.months-bar{grid-template-columns:140px 1fr}
+    .gantt-row,.milestone-row,.launch-row,.months-bar,.sprint-banner{grid-template-columns:140px 1fr}
+    .week-cell{font-size:8px;padding:2px 0}
     .progress-row{flex-wrap:nowrap}
     .progress-card{min-width:140px;padding:12px 14px}
     .modal{padding:20px}
@@ -281,7 +287,8 @@
     .app-summary{margin-left:52px;font-size:13px}
   }
   @media(max-width:480px){
-    .gantt-row,.milestone-row,.launch-row,.months-bar{grid-template-columns:120px 1fr}
+    .gantt-row,.milestone-row,.launch-row,.months-bar,.sprint-banner{grid-template-columns:120px 1fr}
+    .week-cell{font-size:7px}
     .bar{min-width:50px}
     .header{padding:40px 16px 16px}
     .top-bar{padding:12px 12px}
@@ -364,7 +371,27 @@ function render(){
   const pids=['fase-1','fase-1.5','fase-2','fase-3'],pcols={'fase-1':'#3BB1BD','fase-1.5':'#9B6DD7','fase-2':'#E8A838','fase-3':'#3BDB96'};
   pids.forEach(pid=>{const p=data.phases[pid];if(!p)return;const pr=phaseProgress(pid);h+=`<div class="progress-card"><div class="pc-top"><div class="pc-dot" style="background:${pcols[pid]}"></div><div class="pc-name">${p.name.split('—')[0].trim()}</div><div class="pc-dates">${p.dates}</div></div><div class="pc-bar-bg"><div class="pc-bar-fill" style="width:${pr.pct}%;background:${pcols[pid]}"></div></div><div class="pc-bottom"><div class="pc-pct" style="color:${pcols[pid]}">${pr.pct}%</div><div class="pc-count">${pr.done}/${pr.total} done</div></div></div>`});
   h+='</div>';
-  h+=`<div class="timeline"><div class="months-bar"><div class="months-bar-label">Tasks</div><div class="months-track"><div class="month-label">Marzo</div><div class="month-label">Abril</div><div class="month-label">Mayo</div></div></div><div style="position:relative">`;
+  // Build weeks row
+  const weeks=[];
+  const monthNames=['Marzo','Abril','Mayo'];
+  const monthStarts=[new Date('2026-03-01'),new Date('2026-04-01'),new Date('2026-05-01')];
+  const monthEnds=[new Date('2026-03-31'),new Date('2026-04-30'),new Date('2026-05-31')];
+  const today=new Date();
+  for(let mi=0;mi<3;mi++){
+    let d=new Date(monthStarts[mi]);let wn=1;
+    while(d<=monthEnds[mi]){
+      const wStart=new Date(d);
+      const wEnd=new Date(d);wEnd.setDate(wEnd.getDate()+6);
+      if(wEnd>monthEnds[mi])wEnd.setTime(monthEnds[mi].getTime());
+      const left=dayPos(wStart.toISOString().slice(0,10));
+      const width=((wEnd-wStart)/864e5+1)/TD*100;
+      const isCurrent=today>=wStart&&today<=wEnd;
+      weeks.push({label:`S${wn}`,left,width,current:isCurrent});
+      wn++;d.setDate(d.getDate()+7);
+    }
+  }
+  let weeksHtml=weeks.map(w=>`<div class="week-cell${w.current?' current':''}" style="flex:0 0 ${w.width}%">${w.label}</div>`).join('');
+  h+=`<div class="timeline"><div class="months-bar"><div class="months-bar-label">Tasks</div><div class="months-track"><div class="months-row"><div class="month-label">Marzo</div><div class="month-label">Abril</div><div class="month-label">Mayo</div></div><div class="weeks-row">${weeksHtml}</div></div></div><div style="position:relative">`;
   h+=`<div style="display:grid;grid-template-columns:220px 1fr;position:absolute;top:0;bottom:0;left:0;right:0;pointer-events:none;z-index:1"><div></div><div class="col-dividers"><div class="col-div"></div><div class="col-div"></div><div class="col-div"></div></div></div>`;
   h+=`<div style="display:grid;grid-template-columns:220px 1fr;position:absolute;top:0;bottom:0;left:0;right:0;pointer-events:none;z-index:5"><div></div><div style="position:relative"><div class="today-line" style="left:${tp}%"><div class="today-dot"></div><div class="today-label">Hoy</div></div></div></div>`;
   // Render sprints
